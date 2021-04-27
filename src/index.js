@@ -3,11 +3,32 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { createStore, applyMiddleware } from 'redux';
+import { Provider } from 'react-redux';
+import rootReducer from './modules';
+import logger from 'redux-logger';
+import { composeWithDevTools } from 'redux-devtools-extension';
+import ReduxThunk from 'redux-thunk';
+import { Router } from 'react-router-dom';
+import { createBrowserHistory } from 'history';
+
+const customHistory = createBrowserHistory();
+
+/*프로젝트에 Redux 적용*/
+const store = createStore(
+  rootReducer,
+  composeWithDevTools(
+    applyMiddleware(
+      ReduxThunk.withExtraArgument({history:customHistory}),
+      logger))
+);
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+  <Router history={customHistory}>
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </Router>,
   document.getElementById('root')
 );
 
